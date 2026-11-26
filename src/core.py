@@ -20,7 +20,7 @@ def limpar(mascara):
     mascara = cv2.morphologyEx(mascara, cv2.MORPH_CLOSE, kernel, iterations=2)
     _, rotulos, stats, _ = cv2.connectedComponentsWithStats(mascara)
     grandes = np.flatnonzero(stats[:, cv2.CC_STAT_AREA] >= 0.01 * mascara.size)
-    grandes = grandes[grandes != 0]  # rótulo 0 é o fundo
+    grandes = grandes[grandes != 0]
     mascara = np.where(np.isin(rotulos, grandes), 255, 0).astype(np.uint8)
     contornos, _ = cv2.findContours(mascara, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     return cv2.drawContours(mascara, contornos, -1, 255, cv2.FILLED)
