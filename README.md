@@ -1,59 +1,8 @@
-# Detecção de regiões brancas na imagem
-
-Este projeto compara duas formas simples de destacar regiões claras e pouco saturadas na imagem `img/cabra.jpg`:
-
-- `src/filter.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
-- `src/fuzzy.py`: sistema fuzzy Mamdani (scikit-fuzzy) com as entradas saturação e brilho, 6 regras e defuzzificação por centróide. Gera um grau de 0 a 100 para cada pixel.
-- `src/core.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
-
-Os scripts classificam pixels pela cor; eles não reconhecem a cabra como objeto.
-
-## Criar o ambiente e instalar dependências
-
-Na pasta do projeto, execute:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-No Windows (Prompt de Comando), ative o ambiente com:
-
-```bat
-.venv\Scripts\activate
-```
-
-## Executar
-
-Com a `.venv` ativada, execute a partir da pasta do projeto:
-
-```bash
-python src/filter.py
-python src/fuzzy.py
-```
-
-Os resultados serão gravados em `img/`:
-
-- `img/resultado_filter.png`
-- `img/resultado_fuzzy.png`
-
-Para sair do ambiente virtual:
-
-```bash
-deactivate
-```
-
----
-
 # Aplicando lógica fuzzy em problemas do cotidiano
 
 **Disciplina:** Inteligência Artificial · **Professora:** Érica Carvalho
 
 **Tema:** separar um objeto do fundo de uma foto (segmentação de imagem), comparando um filtro booleano com um sistema fuzzy.
-
----
 
 ## Parte 1: Pesquisa e análise
 
@@ -153,48 +102,15 @@ Versão em texto, caso o Mermaid não seja renderizado no PDF:
 3. **Saída → Defuzzificação (qualitativa).** Cada regra "corta" a curva do seu termo de saída na altura da sua força, e as curvas cortadas são unidas (máximo) numa única forma. A **defuzzificação por centróide** pega o "centro de massa" dessa forma. Se a maior parte da área está em "sim", o número fica perto de 100; se a área está dividida entre "sim" e "talvez", ele cai no meio. O resultado é um único número que resume a opinião de todas as regras ao mesmo tempo.
 4. **Decisão final.** Para desenhar a máscara, os pixels com grau ≥ 55 são considerados cabra. Depois é feita uma limpeza espacial (remoção de ruído e de regiões pequenas, e preenchimento de buracos), igual nos dois métodos.
 
-### Exemplos calculados pelo próprio sistema
-
-| Região | Saturação | Brilho | Grau fuzzy | Filtro booleano (S ≤ 70 e V ≥ 110) |
-|---|---|---|---|---|
-| Corpo ao sol | 5 | 241 | **85,0** → cabra | cabra |
-| Barriga na sombra | 65 | 140 | **65,3** → cabra | cabra (por pouco, S = 71 já falharia) |
-| Pescoço na sombra | 56 | 94 | **56,3** → cabra | **fundo** ✗ |
-| Fundo bege desfocado | 97 | 169 | **50,0** → fundo | fundo |
-| Grama | 250 | 105 | **15,0** → fundo | fundo |
-
-### Roteiro da apresentação verbal (1–2 min)
-
-> "Nosso problema é recortar um objeto do fundo de uma foto, o que o celular faz no modo retrato. Usamos uma foto de uma cabra branca na grama.
->
-> A primeira ideia é um filtro booleano: se o pixel tem pouca cor e é claro, é cabra; senão, é fundo. O problema é que o pelo branco na sombra fica cinza e mais escuro. Com um corte fixo, um pixel com brilho 109 é descartado e um com 110 é aceito, e por isso o filtro perde o pescoço e a parte de baixo da cabra.
->
-> Com lógica fuzzy, usamos duas variáveis linguísticas: **saturação** (baixa, média, alta) e **brilho** (escuro, médio, claro). A saída é o grau de 'ser cabra' (não, talvez, sim). Temos seis regras, por exemplo: *se a saturação é baixa e o brilho é médio, então é cabra*, que é o pelo na sombra.
->
-> Cada pixel é fuzzificado, as regras disparam com graus parciais, e a defuzzificação por centróide junta tudo num número de 0 a 100. Assim, um pixel 'meio na sombra' recebe uma nota intermediária em vez de ser descartado.
->
-> No resultado, o filtro rígido pega só as partes iluminadas, e o fuzzy pega a cabra inteira, inclusive o pescoço e a barriga na sombra."
-
 ---
 
 ## Parte 3: Implementação
-
-### Ferramentas (software livre)
-
-- **Python 3**
-- **scikit-fuzzy** (`skfuzzy.control`): variáveis, termos, regras, inferência Mamdani e defuzzificação
-- **OpenCV**: leitura da imagem, conversão para HSV e operações morfológicas
-- **NumPy**
-
-### Arquivos
 
 | Arquivo | Conteúdo |
 |---|---|
 | `src/filter.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
 | `src/fuzzy.py` | sistema fuzzy Mamdani completo (variáveis, termos, regras R1–R6, centróide) |
 | `src/core.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
-
-**Detalhe de desempenho:** como saturação e brilho só assumem valores inteiros de 0 a 255, o `src/fuzzy.py` avalia o sistema fuzzy **uma única vez** para todas as 256 × 256 combinações e guarda o resultado numa tabela. Depois, cada pixel da imagem apenas consulta essa tabela. O resultado é o mesmo de avaliar pixel por pixel, só que muito mais rápido.
 
 ### Como executar
 
@@ -203,19 +119,3 @@ pip install -r requirements.txt
 python src/filter.py   # gera img/resultado_filter.png
 python src/fuzzy.py    # gera img/resultado_fuzzy.png
 ```
-
-### Resultados
-
-**Filtro booleano:** só detecta as partes bem iluminadas. O pescoço e grande parte do peito e da barriga (na sombra) ficam de fora.
-
-![Resultado do filtro booleano](img/resultado_filter.png)
-
-**Sistema fuzzy:** à esquerda, o mapa de graus (quanto mais branco, maior o grau de "ser cabra"); à direita, a região final. A cabra é detectada praticamente inteira, inclusive nas regiões de sombra.
-
-![Resultado do sistema fuzzy](img/resultado_fuzzy.png)
-
-### Conclusão
-
-O filtro booleano precisa de um limite exato, e qualquer escolha erra de um lado: com um limite mais permissivo ele aceita o fundo bege, e com um mais rígido perde a sombra. O sistema fuzzy descreve o problema com termos próximos da linguagem humana ("pouco colorido", "meio escuro") e combina várias regras com graus parciais. Por isso ele lida melhor com a transição gradual de luz e sombra, que é exatamente o tipo de situação em que a lógica booleana falha.
-
-**Limitação:** os dois métodos classificam pixels pela cor, ou seja, não "reconhecem" a cabra como objeto. Um objeto branco qualquer no fundo também seria detectado.
