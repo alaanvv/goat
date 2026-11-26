@@ -1,18 +1,16 @@
 # Detecção de regiões brancas na imagem
 
-Este projeto compara duas formas simples de destacar regiões claras e pouco saturadas na imagem `cabra.jpg`:
+Este projeto compara duas formas simples de destacar regiões claras e pouco saturadas na imagem `img/cabra.jpg`:
 
-- `filtro.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
-- `fuzzy.py`: sistema fuzzy Mamdani (scikit-fuzzy) com as entradas saturação e brilho, 6 regras e defuzzificação por centróide. Gera um grau de 0 a 100 para cada pixel.
-- `comum.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
-
-As respostas das partes 1, 2 e 3 do exercício estão em [`documentacao.md`](documentacao.md).
+- `src/filtro.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
+- `src/fuzzy.py`: sistema fuzzy Mamdani (scikit-fuzzy) com as entradas saturação e brilho, 6 regras e defuzzificação por centróide. Gera um grau de 0 a 100 para cada pixel.
+- `src/comum.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
 
 Os scripts classificam pixels pela cor; eles não reconhecem a cabra como objeto.
 
 ## Criar o ambiente e instalar dependências
 
-Na pasta `IAEX`, execute:
+Na pasta do projeto, execute:
 
 ```bash
 python3 -m venv .venv
@@ -29,17 +27,17 @@ No Windows (Prompt de Comando), ative o ambiente com:
 
 ## Executar
 
-Com a `.venv` ativada e `cabra.jpg` na pasta do projeto:
+Com a `.venv` ativada, execute a partir da pasta do projeto:
 
 ```bash
-python filtro.py
-python fuzzy.py
+python src/filtro.py
+python src/fuzzy.py
 ```
 
-Os resultados serão gravados na mesma pasta:
+Os resultados serão gravados em `img/`:
 
-- `resultado_filtro.png`
-- `resultado_fuzzy.png`
+- `img/resultado_filtro.png`
+- `img/resultado_fuzzy.png`
 
 Para sair do ambiente virtual:
 
@@ -61,7 +59,7 @@ deactivate
 
 ### Problema escolhido
 
-Recortar o objeto principal de uma foto e separá-lo do fundo, como fazem o "modo retrato" do celular, a remoção de fundo em apps de foto e os filtros de videochamada. No nosso caso, o objetivo é encontrar **os pixels que pertencem à cabra branca** da imagem `cabra.jpg`.
+Recortar o objeto principal de uma foto e separá-lo do fundo, como fazem o "modo retrato" do celular, a remoção de fundo em apps de foto e os filtros de videochamada. No nosso caso, o objetivo é encontrar **os pixels que pertencem à cabra branca** da imagem `img/cabra.jpg`.
 
 Esse problema é de grau, e não de sim/não, porque a cor de um pelo branco muda conforme a luz:
 
@@ -192,29 +190,29 @@ Versão em texto, caso o Mermaid não seja renderizado no PDF:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `filtro.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
-| `fuzzy.py` | sistema fuzzy Mamdani completo (variáveis, termos, regras R1–R6, centróide) |
-| `comum.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
+| `src/filtro.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
+| `src/fuzzy.py` | sistema fuzzy Mamdani completo (variáveis, termos, regras R1–R6, centróide) |
+| `src/comum.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
 
-**Detalhe de desempenho:** como saturação e brilho só assumem valores inteiros de 0 a 255, o `fuzzy.py` avalia o sistema fuzzy **uma única vez** para todas as 256 × 256 combinações e guarda o resultado numa tabela. Depois, cada pixel da imagem apenas consulta essa tabela. O resultado é o mesmo de avaliar pixel por pixel, só que muito mais rápido.
+**Detalhe de desempenho:** como saturação e brilho só assumem valores inteiros de 0 a 255, o `src/fuzzy.py` avalia o sistema fuzzy **uma única vez** para todas as 256 × 256 combinações e guarda o resultado numa tabela. Depois, cada pixel da imagem apenas consulta essa tabela. O resultado é o mesmo de avaliar pixel por pixel, só que muito mais rápido.
 
 ### Como executar
 
 ```bash
 pip install -r requirements.txt
-python filtro.py   # gera resultado_filtro.png
-python fuzzy.py    # gera resultado_fuzzy.png
+python src/filtro.py   # gera img/resultado_filtro.png
+python src/fuzzy.py    # gera img/resultado_fuzzy.png
 ```
 
 ### Resultados
 
 **Filtro booleano:** só detecta as partes bem iluminadas. O pescoço e grande parte do peito e da barriga (na sombra) ficam de fora.
 
-![Resultado do filtro booleano](resultado_filtro.png)
+![Resultado do filtro booleano](img/resultado_filtro.png)
 
 **Sistema fuzzy:** à esquerda, o mapa de graus (quanto mais branco, maior o grau de "ser cabra"); à direita, a região final. A cabra é detectada praticamente inteira, inclusive nas regiões de sombra.
 
-![Resultado do sistema fuzzy](resultado_fuzzy.png)
+![Resultado do sistema fuzzy](img/resultado_fuzzy.png)
 
 ### Conclusão
 

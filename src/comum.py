@@ -3,11 +3,12 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-PASTA = Path(__file__).parent
+RAIZ = Path(__file__).resolve().parent.parent
+PASTA_IMAGENS = RAIZ / "img"
 
 
 def carregar_hsv():
-    imagem = cv2.imread(str(PASTA / "cabra.jpg"))
+    imagem = cv2.imread(str(PASTA_IMAGENS / "cabra.jpg"))
     if imagem is None:
         raise SystemExit("Não foi possível abrir cabra.jpg")
     return imagem, cv2.cvtColor(imagem, cv2.COLOR_BGR2HSV)
@@ -33,5 +34,5 @@ def salvar(nome, imagem, mascara, extra=None):
     resultado = cv2.addWeighted(imagem, 0.5, verde, 0.5, 0)
     if extra is not None:
         resultado = np.hstack([cv2.cvtColor(extra, cv2.COLOR_GRAY2BGR), resultado])
-    cv2.imwrite(str(PASTA / nome), resultado)
+    cv2.imwrite(str(PASTA_IMAGENS / nome), resultado)
     print(f"Salvo: {nome}  ({100 * np.count_nonzero(mascara) / mascara.size:.1f}% da imagem)")
