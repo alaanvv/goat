@@ -4,7 +4,7 @@ Este projeto compara duas formas simples de destacar regiões claras e pouco sat
 
 - `src/filtro.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
 - `src/fuzzy.py`: sistema fuzzy Mamdani (scikit-fuzzy) com as entradas saturação e brilho, 6 regras e defuzzificação por centróide. Gera um grau de 0 a 100 para cada pixel.
-- `src/comum.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
+- `src/core.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
 
 Os scripts classificam pixels pela cor; eles não reconhecem a cabra como objeto.
 
@@ -192,7 +192,7 @@ Versão em texto, caso o Mermaid não seja renderizado no PDF:
 |---|---|
 | `src/filtro.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
 | `src/fuzzy.py` | sistema fuzzy Mamdani completo (variáveis, termos, regras R1–R6, centróide) |
-| `src/comum.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
+| `src/core.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
 
 **Detalhe de desempenho:** como saturação e brilho só assumem valores inteiros de 0 a 255, o `src/fuzzy.py` avalia o sistema fuzzy **uma única vez** para todas as 256 × 256 combinações e guarda o resultado numa tabela. Depois, cada pixel da imagem apenas consulta essa tabela. O resultado é o mesmo de avaliar pixel por pixel, só que muito mais rápido.
 

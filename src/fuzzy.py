@@ -2,7 +2,7 @@
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
-from comum import carregar_hsv, limpar, salvar
+from core import carregar_hsv, limpar, salvar
 
 # 1) Variáveis linguísticas e termos fuzzy (fuzzificação).
 universo = np.arange(256)

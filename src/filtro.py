@@ -1,6 +1,6 @@
 """Abordagem booleana: cada pixel é 'cabra' (1) ou 'não cabra' (0) por limites rígidos em HSV."""
 import cv2
-from comum import carregar_hsv, limpar, salvar
+from core import carregar_hsv, limpar, salvar
 
 imagem, hsv = carregar_hsv()
 
