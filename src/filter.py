@@ -6,4 +6,4 @@ imagem, hsv = carregar_hsv()
 
 # saturação <= 70 e brilho >= 110 -> cabra
 mascara = cv2.inRange(hsv, (0, 0, 110), (180, 70, 255))
-salvar("resultado_filtro.png", imagem, limpar(mascara))
+salvar("resultado_filter.png", imagem, limpar(mascara))

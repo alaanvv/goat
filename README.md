@@ -2,7 +2,7 @@
 
 Este projeto compara duas formas simples de destacar regiões claras e pouco saturadas na imagem `img/cabra.jpg`:
 
-- `src/filtro.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
+- `src/filter.py`: abordagem booleana, com limite fixo de saturação e brilho no espaço HSV (cada pixel é 0 ou 1).
 - `src/fuzzy.py`: sistema fuzzy Mamdani (scikit-fuzzy) com as entradas saturação e brilho, 6 regras e defuzzificação por centróide. Gera um grau de 0 a 100 para cada pixel.
 - `src/core.py`: funções usadas pelos dois scripts (carregar a imagem, limpar a máscara e salvar o resultado).
 
@@ -30,13 +30,13 @@ No Windows (Prompt de Comando), ative o ambiente com:
 Com a `.venv` ativada, execute a partir da pasta do projeto:
 
 ```bash
-python src/filtro.py
+python src/filter.py
 python src/fuzzy.py
 ```
 
 Os resultados serão gravados em `img/`:
 
-- `img/resultado_filtro.png`
+- `img/resultado_filter.png`
 - `img/resultado_fuzzy.png`
 
 Para sair do ambiente virtual:
@@ -190,7 +190,7 @@ Versão em texto, caso o Mermaid não seja renderizado no PDF:
 
 | Arquivo | Conteúdo |
 |---|---|
-| `src/filtro.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
+| `src/filter.py` | abordagem booleana: `cv2.inRange` com S ≤ 70 e V ≥ 110 |
 | `src/fuzzy.py` | sistema fuzzy Mamdani completo (variáveis, termos, regras R1–R6, centróide) |
 | `src/core.py` | partes iguais para os dois: carregar a imagem, limpar a máscara e salvar o resultado |
 
@@ -200,7 +200,7 @@ Versão em texto, caso o Mermaid não seja renderizado no PDF:
 
 ```bash
 pip install -r requirements.txt
-python src/filtro.py   # gera img/resultado_filtro.png
+python src/filter.py   # gera img/resultado_filter.png
 python src/fuzzy.py    # gera img/resultado_fuzzy.png
 ```
 
@@ -208,7 +208,7 @@ python src/fuzzy.py    # gera img/resultado_fuzzy.png
 
 **Filtro booleano:** só detecta as partes bem iluminadas. O pescoço e grande parte do peito e da barriga (na sombra) ficam de fora.
 
-![Resultado do filtro booleano](img/resultado_filtro.png)
+![Resultado do filtro booleano](img/resultado_filter.png)
 
 **Sistema fuzzy:** à esquerda, o mapa de graus (quanto mais branco, maior o grau de "ser cabra"); à direita, a região final. A cabra é detectada praticamente inteira, inclusive nas regiões de sombra.
 
