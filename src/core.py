@@ -1,4 +1,3 @@
-"""Funções compartilhadas: carregar a imagem, limpar a máscara e salvar o resultado."""
 from pathlib import Path
 import cv2
 import numpy as np
